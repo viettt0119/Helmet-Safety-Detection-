@@ -159,7 +159,7 @@ Quan trọng nhất:
 make install        # uv sync --frozen
 make check          # ruff + mypy --strict + pytest (194 test)
 make test-fast      # bỏ qua test dùng model thật (@slow)
-make cov            # coverage (~95%)
+make cov            # coverage (~96%)
 ```
 
 * `tests/unit` — domain (hình học box, policy, luật ghép mũ/đầu), use case (fake detector),

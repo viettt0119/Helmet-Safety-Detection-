@@ -12,7 +12,7 @@
 | 6 | **Thiếu xử lý lỗi / validate đầu vào** | Cao | Không kiểm tra ảnh hỏng, file sai định dạng, ngưỡng ngoài [0,1], imgsz không chia hết 32, webcam mất kết nối… | `pydantic-settings` validate cấu hình; `validate_image`, giới hạn kích thước upload, chống decompression-bomb (40 MP), reconnect stream, hệ thống lỗi có kiểu + global error handler. |
 | 7 | **Tải weights không an toàn** | Trung bình | `urlretrieve` không timeout, không retry, ghi trực tiếp → file hỏng nếu đứt mạng giữa chừng. | `WeightsDownloader`: httpx streaming, timeout, retry exponential back-off + jitter (tenacity), chỉ HTTPS, ghi atomic (`.part` → rename), kiểm tra kích thước tối thiểu. |
 | 8 | **Logging bằng `print`** | Thấp | Không có mức log, không có ngữ cảnh. | `structlog`: console đẹp khi dev, JSON khi production, `request_id` cho mọi request. |
-| 9 | **Không có test, không CI, không đóng gói** | Cao | — | 194 test (unit + integration + E2E với model thật), coverage 95%, ruff + mypy strict, GitHub Actions, Dockerfile multi-stage, docker-compose. |
+| 9 | **Không có test, không CI, không đóng gói** | Cao | — | 194 test (unit + integration + E2E với model thật), coverage 96%, ruff + mypy strict, GitHub Actions, Dockerfile multi-stage, docker-compose. |
 | 10 | **Repo rác** | Thấp | `.idea/`, `labels.cache` (chứa đường dẫn Windows) bị commit; file có BOM UTF-8. | Xoá khỏi git, thêm `.gitignore`, bỏ BOM. |
 | 11 | **README sai lệch dataset** | Thấp | README ghi class `helmet / no_helmet`, thực tế là `head / helmet / person`. | README viết lại theo đúng dữ liệu. |
 | 12 | **Không có cách tích hợp hệ thống** | Trung bình | Chỉ chạy được bằng cửa sổ OpenCV. | REST API FastAPI (JSON + ảnh annotate), CLI có `--json`, exit code `2` khi có vi phạm (dùng cho cron/CI/camera pipeline). |

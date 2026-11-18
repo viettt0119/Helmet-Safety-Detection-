@@ -52,8 +52,15 @@ def stdout_to_stderr() -> Iterator[None]:
 
 
 def _default_model_factory(weights: str) -> Any:
-    from ultralytics import YOLO  # type: ignore[attr-defined]
-
+    # Importing Ultralytics the first time may print banners / create its settings file. Its
+    # logger handler binds to ``sys.stdout`` at import, so import with stdout pointing at the
+    # process stderr: library chatter must never corrupt machine-readable CLI output.
+    process_stderr = sys.__stderr__ or sys.stderr
+    with contextlib.redirect_stdout(process_stderr):
+        from ultralytics import YOLO  # type: ignore[attr-defined]
+    for handler in logging.getLogger("ultralytics").handlers:
+        if isinstance(handler, logging.StreamHandler) and handler.stream is sys.__stdout__:
+            handler.setStream(process_stderr)
     return YOLO(weights)
 
 
