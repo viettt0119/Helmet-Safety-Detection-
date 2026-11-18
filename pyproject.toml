@@ -1,0 +1,99 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "helmet-safety"
+version = "2.0.0"
+description = "Helmet (PPE) compliance detection with YOLOv10: CLI + REST API, clean architecture."
+readme = "README.md"
+requires-python = ">=3.12"
+authors = [{ name = "Viet Tran" }]
+keywords = ["yolo", "yolov10", "computer-vision", "ppe", "helmet", "safety"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Image Recognition",
+]
+dependencies = [
+    "ultralytics>=8.4.215,<9",
+    "torch>=2.8",
+    "torchvision>=0.23",
+    "opencv-python>=4.10",
+    "numpy>=2.1",
+    "pyyaml>=6.0.2",
+    "pydantic>=2.11,<3",
+    "pydantic-settings>=2.10,<3",
+    "fastapi>=0.120,<1",
+    "uvicorn[standard]>=0.35",
+    "python-multipart>=0.0.20",
+    "structlog>=25.4",
+    "typer>=0.16",
+    "httpx>=0.28",
+    "tenacity>=9.2",
+    "anyio>=4.9",
+]
+
+[project.scripts]
+helmet-safety = "helmet_safety.interfaces.cli.main:run"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0",
+    "pytest-asyncio>=1.2",
+    "pytest-cov>=7.0",
+    "respx>=0.22",
+    "ruff>=0.14",
+    "mypy>=1.18",
+    "types-PyYAML>=6.0",
+    "httpx2>=2.16",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/helmet_safety"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "SIM", "RUF", "PL", "PT", "ASYNC", "S", "C4", "RET"]
+ignore = ["PLR0911", "PLR0913", "PLR0917", "PLR2004", "S101", "S104", "RUF001", "RUF002", "RUF003"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S", "PLR2004", "PLC0415", "ARG"]
+"src/helmet_safety/infrastructure/**" = ["PLC0415"]
+"src/helmet_safety/interfaces/**" = ["PLC0415", "B008"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+mypy_path = "src"
+packages = ["helmet_safety"]
+warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = ["ultralytics.*", "cv2.*", "torch.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+minversion = "9.0"
+testpaths = ["tests"]
+addopts = "-ra --strict-markers --strict-config"
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+markers = [
+    "slow: loads the real YOLO model (deselect with -m 'not slow')",
+]
+filterwarnings = ["ignore::DeprecationWarning:ultralytics.*"]
+
+[tool.coverage.run]
+source = ["helmet_safety"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+exclude_also = ["if TYPE_CHECKING:", "raise NotImplementedError", "\\.\\.\\."]
