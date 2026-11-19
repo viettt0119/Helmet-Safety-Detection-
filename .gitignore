@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+build/
+dist/
+
+# Tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# IDE
+.idea/
+.vscode/
+
+# Environment
+.env
+
+# Generated artefacts
+outputs/
+data/.resolved/
+data/**/labels.cache
+runs/            # training outputs (previously committed runs stay tracked)

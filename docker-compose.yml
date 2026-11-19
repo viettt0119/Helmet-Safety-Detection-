@@ -1,0 +1,39 @@
+# docker compose up --build        -> API on http://localhost:8000/docs
+services:
+  api:
+    build:
+      context: .
+      args:
+        TORCH_VARIANT: ${TORCH_VARIANT:-cpu}
+    image: helmet-safety:latest
+    container_name: helmet-safety-api
+    ports:
+      - "${HELMET_API__PORT:-8000}:8000"
+    environment:
+      HELMET_LOG_LEVEL: ${HELMET_LOG_LEVEL:-INFO}
+      HELMET_API__MAX_CONCURRENCY: ${HELMET_API__MAX_CONCURRENCY:-2}
+      HELMET_API__INFERENCE_TIMEOUT_S: ${HELMET_API__INFERENCE_TIMEOUT_S:-30}
+      HELMET_POLICY__HEAD_CONFIDENCE: ${HELMET_POLICY__HEAD_CONFIDENCE:-0.35}
+      HELMET_POLICY__HELMET_CONFIDENCE: ${HELMET_POLICY__HELMET_CONFIDENCE:-0.35}
+      HELMET_POLICY__PERSON_CONFIDENCE: ${HELMET_POLICY__PERSON_CONFIDENCE:-0.35}
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 3g
+    restart: unless-stopped
+
+  # One-off batch prediction over the test images: docker compose run --rm predict
+  predict:
+    image: helmet-safety:latest
+    profiles: ["tools"]
+    depends_on: []
+    volumes:
+      - ./data/test/images:/input:ro
+      - ./outputs:/output
+    command: ["predict", "/input", "--output-dir", "/output"]
