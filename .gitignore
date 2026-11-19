@@ -26,3 +26,9 @@ outputs/
 data/.resolved/
 data/**/labels.cache
 runs/            # training outputs (previously committed runs stay tracked)
+
+# graphify: keep shared outputs, ignore machine-local state
+graphify-out/cache/
+graphify-out/.graphify_python
+graphify-out/.graphify_root
+graphify-out/cost.json
